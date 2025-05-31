@@ -1,0 +1,5 @@
+# Python dependencies for SkyeChat VPS Installer
+requests>=2.25.0
+pyyaml>=5.4.0
+paramiko>=2.7.0  # For SSH connections if needed
+psutil>=5.8.0    # For system monitoring
