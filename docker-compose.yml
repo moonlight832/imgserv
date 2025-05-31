@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  skyechat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: skyechat-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - CONVEX_DEPLOYMENT=${CONVEX_DEPLOYMENT}
+      - CONVEX_AUTH_SECRET=${CONVEX_AUTH_SECRET}
+    volumes:
+      - app-data:/app/data
+    networks:
+      - skyechat-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:alpine
+    container_name: skyechat-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - skyechat
+    networks:
+      - skyechat-network
+
+volumes:
+  app-data:
+
+networks:
+  skyechat-network:
+    driver: bridge
