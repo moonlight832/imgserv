@@ -1,46 +1,41 @@
-# SkyeChat
+# SkyeChat Docker Deployment
 
-A modern Slack-like web application built with [Vite](https://vitejs.dev/) and [Convex](https://convex.dev) backend. Features real-time messaging, authentication, and a beautiful responsive UI.
+Complete Docker containerization setup for SkyeChat with production-ready configuration.
 
-## 🚀 Deployment Options
+## 🐳 What's Included
 
-Choose your preferred deployment method:
+- **Multi-stage Dockerfile** - Optimized for production
+- **Docker Compose** - Full stack with Nginx reverse proxy
+- **Automated deployment scripts** - One-command deployment
+- **Health checks** - Container monitoring
+- **Production configuration** - Nginx, SSL ready, security hardened
 
-| Method | Best For | Setup Time | Complexity |
-|--------|----------|------------|------------|
-| [🐳 Docker](#-docker-deployment) | Production, VPS | 5 minutes | Easy |
-| [🔧 VPS Installer](#-vps-installer) | Traditional deployment | 10 minutes | Easy |
-| [💻 Manual Setup](#-manual-development-setup) | Development, customization | 15 minutes | Medium |
+## 🚀 Quick Start
 
----
+### Option 1: Docker VPS Installer (Recommended)
 
-## 🐳 Docker Deployment
-
-**Recommended for production deployments**
-
-### One-Command VPS Deployment
-
-Deploy everything on a fresh VPS with Docker:
+Deploy everything on a fresh VPS with one command:
 
 ```bash
+# Download and run the Docker installer
 curl -fsSL https://raw.githubusercontent.com/moonlight832/imgserv/main/python-vps-installer/install-docker.sh | sudo bash
 ```
 
-### Manual Docker Setup
+### Option 2: Manual Docker Setup
 
-1. **Install Docker:**
+1. **Prerequisites:**
    ```bash
+   # Install Docker and Docker Compose
    curl -fsSL https://get.docker.com | sh
    sudo usermod -aG docker $USER
-   # Log out and back in
    ```
 
 2. **Clone and configure:**
    ```bash
    git clone https://github.com/moonlight832/imgserv.git
-   cd imgserv
+   cd SkyeChatv2
    cp .env.example .env
-   # Edit .env with your Convex configuration
+   # Edit .env with your configuration
    ```
 
 3. **Deploy:**
@@ -48,243 +43,310 @@ curl -fsSL https://raw.githubusercontent.com/moonlight832/imgserv/main/python-vp
    ./deploy.sh deploy
    ```
 
-Your app will be available at `http://your-server-ip` (port 80) or `https://your-domain` (port 443).
-
-**📖 For detailed Docker documentation:** [DOCKER.md](./DOCKER.md)
-
----
-
-## 🔧 VPS Installer
-
-**Perfect for traditional VPS deployments without Docker**
-
-### Automated Installation
-
-```bash
-# Download and run the installer
-curl -fsSL https://raw.githubusercontent.com/moonlight832/imgserv/main/python-vps-installer/install.sh | sudo bash
-```
-
-### Manual Installation Steps
-
-1. **Download installer:**
-   ```bash
-   wget https://raw.githubusercontent.com/moonlight832/imgserv/main/python-vps-installer/install.sh
-   chmod +x install.sh
-   ```
-
-2. **Configure (optional):**
-   Edit the script to update:
-   - Repository URL
-   - Convex deployment URL
-   - Convex auth secret
-   - Domain name
-
-3. **Run installer:**
-   ```bash
-   sudo ./install.sh
-   ```
-
-**What it installs:**
-- Node.js 22.x (via NodeSource repository)
-- Nginx reverse proxy
-- Systemd service for the app
-- Firewall configuration (UFW)
-- SSL certificate setup (if domain provided)
-
-**📖 For detailed installer documentation:** [python-vps-installer/README.md](./python-vps-installer/README.md)
-
----
-
-## 💻 Manual Development Setup
-
-**Best for local development and testing**
-
-### Prerequisites
-
-- Node.js 18+ (recommended: 22.x)
-- npm or yarn
-
-### Installation
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/moonlight832/imgserv.git
-   cd imgserv
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Set up Convex:**
-   ```bash
-   npx convex dev
-   # Follow the prompts to create/connect your Convex deployment
-   ```
-
-4. **Start development server:**
-   ```bash
-   npm run dev
-   ```
-
-Visit `http://localhost:5173` to see your app running.
-
-### Available Scripts
-
-- `npm run dev` - Start frontend and backend in development mode
-- `npm run build` - Build for production
-- `npm run start` - Start production server (after build)
-- `npm run lint` - Run linting and type checking
-
----
-
-## 🏗️ Project Structure
-
-```
-├── src/                    # Frontend React components
-├── convex/                # Backend Convex functions
-├── python-vps-installer/  # VPS deployment scripts
-├── Dockerfile             # Docker container configuration
-├── docker-compose.yml     # Docker orchestration
-├── nginx.conf            # Nginx configuration
-├── deploy.sh             # Docker deployment script
-└── package.json          # Node.js dependencies
-```
-
-### Key Directories
-
-- **`src/`** - Frontend built with React + Vite + TypeScript
-- **`convex/`** - Backend serverless functions and database schema
-- **`python-vps-installer/`** - Automated deployment scripts for VPS
-
----
-
-## ⚙️ Configuration
+## 📋 Configuration
 
 ### Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file with:
 
 ```env
 # Convex Configuration
-CONVEX_DEPLOYMENT=your-deployment-url
-VITE_CONVEX_URL=https://your-deployment.convex.cloud
-
-# Authentication (optional)
+CONVEX_DEPLOYMENT=https://your-deployment.convex.cloud
 CONVEX_AUTH_SECRET=your-auth-secret
 
-# Domain (for SSL, optional)
+# Application Configuration
+NODE_ENV=production
+PORT=3000
+
+# Domain Configuration (for SSL)
 DOMAIN=your-domain.com
 ```
 
-### Convex Setup
+### Docker Compose Services
 
-This project uses [Convex](https://convex.dev) for the backend:
+- **skyechat** - Main application container
+- **nginx** - Reverse proxy and web server
 
-1. Sign up at [convex.dev](https://convex.dev)
-2. Create a new deployment
-3. Get your deployment URL and auth secret
-4. Update your `.env` file
+## 🛠️ Container Management
 
-**Connected to deployment:** [`aware-caiman-68`](https://dashboard.convex.dev/d/aware-caiman-68)
+### Using the Deploy Script
 
----
+```bash
+# Deploy application
+./deploy.sh deploy
 
-## 🔐 Authentication
+# View logs
+./deploy.sh logs
 
-The app uses [Convex Auth](https://auth.convex.dev/) with Anonymous authentication for easy sign-in. You may want to configure additional providers before production deployment.
+# Check status
+./deploy.sh status
 
-**Supported providers:**
-- Anonymous (enabled by default)
-- GitHub, Google, Discord (configurable)
+# Update application
+./deploy.sh update
 
----
+# Stop services
+./deploy.sh stop
 
-## 🌐 Production Considerations
+# Restart services
+./deploy.sh restart
+```
 
-### SSL/HTTPS
+### Direct Docker Commands
 
-- **Docker deployment:** Handles SSL automatically with Let's Encrypt
-- **VPS installer:** Configures SSL if domain is provided
-- **Manual setup:** You'll need to configure SSL separately
+```bash
+# Build image
+docker build -t skyechat:latest .
 
-### Performance
+# Run with Docker Compose
+docker-compose up -d
 
-- Built with Vite for optimal bundling
-- Uses React 19 with modern features
-- Convex provides real-time updates and optimized queries
+# View logs
+docker-compose logs -f
 
-### Security
+# Stop services
+docker-compose down
 
-- Firewall configuration included in automated installers
-- Non-root user creation in Docker
-- Environment variable isolation
+# Check running containers
+docker ps
+```
 
----
+## 🔧 Development
 
-## 📚 Documentation
+### Local Development with Docker
 
-- **[Docker Setup](./DOCKER.md)** - Complete Docker deployment guide
-- **[VPS Installer](./python-vps-installer/README.md)** - Traditional deployment guide
-- **[Convex Docs](https://docs.convex.dev/)** - Backend development
-- **[Vite Docs](https://vitejs.dev/)** - Frontend build system
+```bash
+# Create development environment
+cp .env.example .env.dev
 
----
+# Run development stack
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+```
 
-## 🤝 Contributing
+### Building Custom Images
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+```bash
+# Build with custom tag
+docker build -t skyechat:v1.0.0 .
 
----
+# Build with build args
+docker build --build-arg NODE_ENV=development -t skyechat:dev .
+```
 
-## 📄 License
+## 🔒 Security Features
 
-This project is open source and available under the [MIT License](LICENSE).
+### Container Security
+- **Non-root user** - Application runs as `nextjs` user
+- **Multi-stage build** - Minimal attack surface
+- **Health checks** - Automatic container monitoring
+- **Resource limits** - Prevents resource exhaustion
 
----
+### Network Security
+- **Nginx proxy** - Hides application server
+- **Rate limiting** - Prevents abuse
+- **SSL/TLS ready** - HTTPS configuration included
+- **Security headers** - XSS, CSRF protection
 
-## 🆘 Troubleshooting
+## 🌐 Production Deployment
+
+### SSL/HTTPS Setup
+
+1. **With Let's Encrypt:**
+   ```bash
+   # Install Certbot
+   sudo apt install certbot
+
+   # Get certificate
+   sudo certbot certonly --webroot -w /var/www/certbot -d yourdomain.com
+
+   # Update nginx.conf to enable HTTPS server block
+   # Restart nginx
+   docker-compose restart nginx
+   ```
+
+2. **With custom certificates:**
+   ```bash
+   # Place certificates in ./ssl/ directory
+   mkdir ssl
+   cp your-cert.pem ssl/cert.pem
+   cp your-key.pem ssl/key.pem
+   
+   # Restart services
+   docker-compose restart
+   ```
+
+### Scaling
+
+```bash
+# Scale application containers
+docker-compose up -d --scale skyechat=3
+
+# Use with load balancer
+# Update nginx.conf upstream configuration
+```
+
+### Backup and Restore
+
+```bash
+# Backup application data
+docker run --rm -v skyechat_app-data:/data -v $(pwd):/backup alpine tar czf /backup/skyechat-backup.tar.gz /data
+
+# Restore application data
+docker run --rm -v skyechat_app-data:/data -v $(pwd):/backup alpine tar xzf /backup/skyechat-backup.tar.gz -C /
+```
+
+## 📊 Monitoring
+
+### Health Checks
+
+The container includes built-in health checks:
+
+```bash
+# Check container health
+docker inspect --format='{{.State.Health.Status}}' skyechat-app
+
+# View health check logs
+docker inspect --format='{{range .State.Health.Log}}{{.Output}}{{end}}' skyechat-app
+```
+
+### Logs
+
+```bash
+# Application logs
+docker-compose logs -f skyechat
+
+# Nginx logs
+docker-compose logs -f nginx
+
+# System logs
+sudo journalctl -u docker -f
+```
+
+### Resource Monitoring
+
+```bash
+# Container resource usage
+docker stats
+
+# Detailed container info
+docker inspect skyechat-app
+```
+
+## 🔧 Troubleshooting
 
 ### Common Issues
 
-**Port already in use:**
+1. **Container won't start:**
+   ```bash
+   docker-compose logs skyechat
+   docker inspect skyechat-app
+   ```
+
+2. **502 Bad Gateway:**
+   ```bash
+   # Check if app container is running
+   docker-compose ps
+   
+   # Check application logs
+   docker-compose logs skyechat
+   ```
+
+3. **Permission issues:**
+   ```bash
+   # Fix file permissions
+   sudo chown -R 1001:1001 ./data
+   ```
+
+4. **Build failures:**
+   ```bash
+   # Clean build cache
+   docker system prune -a
+   
+   # Rebuild without cache
+   docker-compose build --no-cache
+   ```
+
+### Debug Mode
+
 ```bash
-# Check what's using the port
-sudo lsof -i :3000
-# Kill the process
-sudo kill -9 <PID>
+# Run container in debug mode
+docker run -it --rm skyechat:latest /bin/sh
+
+# Override entrypoint for debugging
+docker run -it --rm --entrypoint /bin/sh skyechat:latest
 ```
 
-**Node.js version issues:**
-```bash
-# Install/use Node.js 22.x
-nvm install 22
-nvm use 22
+## 📈 Performance Optimization
+
+### Image Optimization
+- Multi-stage build reduces image size
+- Alpine Linux base for minimal footprint
+- Production dependencies only
+
+### Runtime Optimization
+- Node.js production mode
+- Nginx caching and compression
+- Health checks for reliability
+
+### Resource Limits
+
+Add to `docker-compose.yml`:
+
+```yaml
+services:
+  skyechat:
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          memory: 256M
 ```
 
-**Convex connection issues:**
-- Verify your `.env` file has correct `CONVEX_DEPLOYMENT` URL
-- Check if Convex deployment is active
-- Run `npx convex dev` to reconnect
+## 🔄 CI/CD Integration
 
-### Getting Help
+### GitHub Actions Example
 
-- 📖 Check the documentation links above
-- 🐛 Open an issue on GitHub
-- 💬 Ask in the Convex Discord community
+```yaml
+name: Deploy to VPS
+on:
+  push:
+    branches: [main]
 
----
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to VPS
+        run: |
+          ssh user@vps "cd /opt/skyechat && git pull && ./deploy.sh update"
+```
 
-## 🚀 Quick Start Summary
+### Automated Updates
 
-| What you want | Command |
-|---------------|---------|
-| **Production on VPS with Docker** | `curl -fsSL https://raw.githubusercontent.com/moonlight832/imgserv/main/python-vps-installer/install-docker.sh \| sudo bash` |
-| **Production on VPS without Docker** | `curl -fsSL https://raw.githubusercontent.com/moonlight832/imgserv/main/python-vps-installer/install.sh \| sudo bash` |
-| **Local development** | `git clone https://github.com/moonlight832/imgserv.git && cd imgserv && npm install && npm run dev` |
+```bash
+# Create update script
+cat > update.sh << 'EOF'
+#!/bin/bash
+cd /opt/skyechat
+git pull origin main
+./deploy.sh update
+EOF
+
+# Add to crontab for daily updates
+echo "0 2 * * * /opt/skyechat/update.sh" | sudo crontab -
+```
+
+## 📞 Support
+
+For Docker-specific issues:
+
+1. Check the troubleshooting section above
+2. Review container logs: `docker-compose logs`
+3. Verify configuration: `docker-compose config`
+4. Test connectivity: `docker-compose exec skyechat curl localhost:3000`
+
+## 📄 License
+
+This Docker configuration is part of the SkyeChat project and follows the same license terms.
